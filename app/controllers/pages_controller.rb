@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 class PagesController < ActionController::Base
   include ActionController::Rendering
   include AbstractController::Helpers
@@ -15,5 +16,12 @@ class PagesController < ActionController::Base
 
   def self.resolver
 
+=======
+class PagesController < ApplicationController
+  prepend_view_path SubtreeResolver.new
+
+  def index
+    render template: params[:page]
+>>>>>>> 89c7499... customer template resolver
   end
 end
