@@ -1,5 +1,6 @@
-- domains:
-    - domain1.com:
-      - content_repo: 'https://github.com/gwincr11/content_test1'
-    -domain2.com:
-      - content_repo: 'https://github.com/thejandroman/content_test2'
+---
+domains:
+  domain1.com:
+    content_repo: 'https://github.com/gwincr11/content_test1'
+  domain2.com:
+    content_repo: 'https://github.com/thejandroman/content_test2'
