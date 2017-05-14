@@ -1,3 +1,4 @@
+---
 domains:
   domain1.com:
     content_repo: 'https://github.com/gwincr11/content_test1'
