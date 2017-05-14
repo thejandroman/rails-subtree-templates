@@ -2,7 +2,6 @@ class SubtreeResolver < ActionView::Resolver
   attr_accessor :request
 
   def find_templates(name, prefix, partial, details, outside_app_allowed = false)
-<<<<<<< HEAD
     puts '-'*99
     puts request.host
     puts '-'*99
@@ -15,16 +14,7 @@ class SubtreeResolver < ActionView::Resolver
 
     path = File.expand_path("../../subtree-views/#{requested}.#{format}", __FILE__)
     #puts path
-=======
-    puts name
-    puts prefix
-    puts partial
-    puts details
-    format = details[:formats][0]
-    requested = normalize_path(name, prefix)
-    path = File.expand_path("../../subtree-views/#{requested}.#{format}", __FILE__)
-    puts path
->>>>>>> 89c7499... customer template resolver
+
     return [] unless File.exists?(path)
     file = File.binread(path)
     [initialize_template(file, path)]
