@@ -9,6 +9,7 @@ class PagesController < ActionController::Base
 
 
   def index
+    @var1 = 'hello'
     @@resolver.request = request
     render template: params[:page]
   end

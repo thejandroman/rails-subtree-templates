@@ -1,28 +1,26 @@
+require 'yaml'
+require 'URI'
+
 class SubtreeResolver < ActionView::Resolver
   attr_accessor :request
 
   def find_templates(name, prefix, partial, details, outside_app_allowed = false)
-    puts '-'*99
-    puts request.host
-    puts '-'*99
-    #puts name
-    #puts prefix
-    #puts partial
-    #puts details
     format = details[:formats][0]
     requested = normalize_path(name, prefix)
 
-    path = File.expand_path("../../subtree-views/#{requested}.#{format}", __FILE__)
-    #puts path
+    folder = content_folder_for(request.domain)
+    path = File.expand_path("../../../content/#{folder}/#{requested}.#{format}", __FILE__)
+    (1..4).reject{|x| x == 3}.collect{|x| x + 1}
+    paths = details[:handlers].reject{|lang| !File.exists?("#{path}.#{lang.to_s}") }
+      .collect{|lang| "#{path}.#{lang.to_s}" }
 
-    return [] unless File.exists?(path)
-    file = File.binread(path)
-    [initialize_template(file, path)]
+    paths << path if File.exists?(path)
+    paths.map { |candidate_path| initialize_template(candidate_path) }
   end
 
   # Initialize an ActionView::Template object based on the record found.
-  def initialize_template(body, path)
-    source = body
+  def initialize_template(path)
+    source = File.binread(path)
     identifier = path
     handler = ActionView::Template.registered_template_handler('erb')
 
@@ -46,5 +44,10 @@ class SubtreeResolver < ActionView::Resolver
     array.map(&:to_s)
   end
 
+  def content_folder_for(domain)
+    configs = YAML.load_file("domains.yml")
 
+    uri = configs["domains"][domain]["content_repo"]
+    URI(uri).path.split('/').last
+  end
 end
