@@ -12,8 +12,4 @@ class PagesController < ActionController::Base
     @@resolver.request = request
     render template: params[:page]
   end
-
-  def self.resolver
-
-  end
 end

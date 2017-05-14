@@ -14,6 +14,7 @@ class SubtreeResolver < ActionView::Resolver
 
     path = File.expand_path("../../subtree-views/#{requested}.#{format}", __FILE__)
     #puts path
+
     return [] unless File.exists?(path)
     file = File.binread(path)
     [initialize_template(file, path)]
