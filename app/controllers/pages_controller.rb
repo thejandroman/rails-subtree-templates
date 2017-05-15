@@ -1,3 +1,5 @@
+require 'YAML'
+
 class PagesController < ActionController::Base
   include ActionController::Rendering
   include AbstractController::Helpers
@@ -11,6 +13,17 @@ class PagesController < ActionController::Base
   def index
     @var1 = 'hello'
     @@resolver.request = request
-    render template: params[:page]
+    render template: params[:page], layout: get_layout
+  end
+
+  private
+
+  def get_layout
+    configs = YAML.load_file('domains.yml')
+    domain = request.host
+    uri = configs["domains"][domain]["layout_repo"]
+    repo = URI(uri).path.split('/').last
+
+    "#{domain}/#{repo}/application.html.erb"
   end
 end
