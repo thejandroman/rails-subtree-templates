@@ -13,6 +13,11 @@ class PagesController < ActionController::Base
   def index
     @var1 = 'hello'
     @@resolver.request = request
+    @branches = ::Branches
+      .new(File.expand_path("content/content_test1"))
+    if params["branches"] && params["branches"]["branch_select"]
+      @branches.checkout params["branches"]["branch_select"]
+    end
     render template: params[:page], layout: get_layout
   end
 
