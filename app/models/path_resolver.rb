@@ -16,6 +16,7 @@ class PathResolver
   end
 
   def last_folder
+    return content_path unless @request.params.has_key?("page")
     path = @request.params["page"].split('/')
     File.join(content_path, path[0..-2])
   end
