@@ -12,13 +12,16 @@ class PagesController < ActionController::Base
 
   def index
     @var1 = 'hello'
+    @paths = PathResolver.new(request)
     @@resolver.request = request
+    @@resolver.paths = @paths
+    @vars = ScopedVarsResolver.new(request, @paths, @paths.last_folder)
     @branches = ::Branches
       .new(File.expand_path("content/content_test1"))
     if params["branches"] && params["branches"]["branch_select"]
       @branches.checkout params["branches"]["branch_select"]
     end
-    render template: params[:page], layout: get_layout
+    render template: params[:page], layout: @paths.layout_path
   end
 
   private

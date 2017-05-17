@@ -5,7 +5,7 @@ class Branches
 
   def initialize(path)
     @path = path
-    @git = Git.open(path, :log => Logger.new(STDOUT))
+    @git = Git.open(path)
     @branches = @git.branches.remote
   end
 
