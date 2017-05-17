@@ -1,7 +1,11 @@
 require 'yaml'
 
+#
+# Setup all the paths used to fetch content and
+# layouts for the app based on the domain and
+# the config files.
 class PathResolver
-  attr_accessor :content_path, :layout_path, :domain
+  attr_accessor :content_path, :layout_path, :domain, :request
 
   def initialize(request)
     @domain = request.domain
@@ -11,30 +15,30 @@ class PathResolver
   end
 
   def content_root
-    File
-      .expand_path("../../../content/", __FILE__)
+    File.expand_path("../../../content/", __FILE__)
   end
 
+  # Return the last folder in the content path
   def last_folder
-    return content_path unless @request.params.has_key?("page")
-    path = @request.params["page"].split('/')
+    return content_path unless request.params.has_key?("page")
+    path = request.params["page"].split('/')
     File.join(content_path, path[0..-2])
   end
 
   private
 
   def get_content_path
-    uri = configs["domains"][@domain]["content_repo"]
+    uri = configs["domains"][domain]["content_repo"]
     folder = URI(uri).path.split('/').last
 
     @content_path = File.join(content_root, folder)
   end
 
   def get_layout_path
-    uri = configs["domains"][@domain]["layout_repo"]
+    uri = configs["domains"][domain]["layout_repo"]
     repo = URI(uri).path.split('/').last
 
-    @layout_path = "#{@domain}/#{repo}/application.html.erb"
+    @layout_path = "#{domain}/#{repo}/application.html.erb"
   end
 
   def configs

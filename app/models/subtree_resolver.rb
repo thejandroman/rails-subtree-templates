@@ -1,6 +1,12 @@
 require 'yaml'
 require 'URI'
 
+#
+#
+# A custom Rails template resolver that uses the
+# setup paths objects content path to look for
+# templates.
+#
 class SubtreeResolver < ActionView::Resolver
   attr_accessor :request, :paths
 
