@@ -42,13 +42,11 @@ class ScopedVarsResolver
 
   def get_current_scope
     @vars = YAML.load_file(File.join(current_path, 'configs.yml'))
-    puts @vars
   end
 
   def get_parent_scope
     return unless parent?
 
-    puts 'recurse'
     @parent = ScopedVarsResolver.new(request, paths, parent_path)
   end
 
