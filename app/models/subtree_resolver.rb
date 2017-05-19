@@ -1,21 +1,30 @@
 require 'yaml'
 require 'URI'
 
+#
+#
+# A custom Rails template resolver that uses the
+# setup paths objects content path to look for
+# templates.
+#
 class SubtreeResolver < ActionView::Resolver
-  attr_accessor :request
+  attr_accessor :request, :paths
 
   def find_templates(name, prefix, partial, details, outside_app_allowed = false)
     format = details[:formats][0]
     requested = normalize_path(name, prefix)
 
-    folder = content_folder_for(request.domain)
-    path = File.expand_path("../../../content/#{folder}/#{requested}.#{format}", __FILE__)
-    (1..4).reject{|x| x == 3}.collect{|x| x + 1}
-    paths = details[:handlers].reject{|lang| !File.exists?("#{path}.#{lang.to_s}") }
+    path = File.
+      expand_path("#{paths.content_path}/#{requested}.#{format}", __FILE__)
+
+    paths = details[:handlers]
+      .reject{|lang| !File.exists?("#{path}.#{lang.to_s}") }
       .collect{|lang| "#{path}.#{lang.to_s}" }
 
     paths << path if File.exists?(path)
-    paths.map { |candidate_path| initialize_template(candidate_path) }
+    paths.map do |candidate_path|
+      initialize_template(candidate_path)
+    end
   end
 
   # Initialize an ActionView::Template object based on the record found.
@@ -42,12 +51,5 @@ class SubtreeResolver < ActionView::Resolver
   # Normalize arrays by converting all symbols to strings.
   def normalize_array(array)
     array.map(&:to_s)
-  end
-
-  def content_folder_for(domain)
-    configs = YAML.load_file("domains.yml")
-
-    uri = configs["domains"][domain]["content_repo"]
-    URI(uri).path.split('/').last
   end
 end

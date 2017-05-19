@@ -1,3 +1,10 @@
+#
+# A form object that looks in the
+# specified git repo and sets up
+# variable of the current branches on
+# that repo and also allows for changing
+# branches.
+#
 class Branches
   include ActiveModel::Model
 
@@ -5,7 +12,7 @@ class Branches
 
   def initialize(path)
     @path = path
-    @git = Git.open(path, :log => Logger.new(STDOUT))
+    @git = Git.open(path)
     @branches = @git.branches.remote
   end
 

@@ -11,24 +11,20 @@ class PagesController < ActionController::Base
 
 
   def index
-    @var1 = 'hello'
+    # setup the needed path settings for content
+    paths = PathResolver.new(request)
     @@resolver.request = request
-    @branches = ::Branches
-      .new(File.expand_path("content/content_test1"))
+    @@resolver.paths = paths
+
+    # Set local vars
+    @vars = ScopedVarsResolver.new(request, paths, paths.last_folder)
+
+    # Setup the git branch tools
+    @branches = Branches.new(paths.content_path)
     if params["branches"] && params["branches"]["branch_select"]
       @branches.checkout params["branches"]["branch_select"]
     end
-    render template: params[:page], layout: get_layout
-  end
 
-  private
-
-  def get_layout
-    configs = YAML.load_file('domains.yml')
-    domain = request.host
-    uri = configs["domains"][domain]["layout_repo"]
-    repo = URI(uri).path.split('/').last
-
-    "#{domain}/#{repo}/application.html.erb"
+    render template: params[:page], layout: paths.layout_path
   end
 end
