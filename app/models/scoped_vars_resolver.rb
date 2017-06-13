@@ -30,18 +30,13 @@ class ScopedVarsResolver
 
   private
 
-  def method_missing(method_name, include_private = false)
-    if @vars.has_key?(method_name.to_s)
-      @vars[method_name.to_s]
-    elsif parent
-      parent.send(method_name)
-    else
-      super
-    end
-  end
+  # Setup the linked list of variable
+  # trees for the file structure
 
+  # Get the Yaml file for the current
+  # file path depth
   def get_current_scope
-    @vars = []
+    @vars = {}
     return unless File.file?(config_path)
     @vars = YAML.load_file(config_path)
   end
@@ -50,17 +45,33 @@ class ScopedVarsResolver
     File.join(current_path, 'configs.yml')
   end
 
+  # Creates a linked list of parent variables
+  # by recursively traversing the parent directories.
   def get_parent_scope
-    return unless parent?
+    return unless root?
 
     @parent = ScopedVarsResolver.new(request, paths, parent_path)
   end
 
-  def parent?
+  def root?
     !File.identical?(parent_path, @paths.content_root)
   end
 
   def parent_path
     File.join(current_path, '..')
+  end
+
+  # Magic!
+  # Return the request variable by walking the tree.
+  # It is actually more like a linked list, but the variables
+  # attribute could be traversed potentially...
+  def method_missing(method_name, include_private = false)
+    if @vars.has_key?(method_name.to_s)
+      @vars[method_name.to_s]
+    elsif parent
+      parent.send(method_name)
+    else
+      super
+    end
   end
 end
