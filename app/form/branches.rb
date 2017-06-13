@@ -8,12 +8,13 @@
 class Branches
   include ActiveModel::Model
 
-  attr_accessor :branches
+  attr_accessor :branches, :current_branch
 
   def initialize(path)
     @path = path
     @git = Git.open(path)
-    @branches = @git.branches.remote
+    @branches = @git.branches.local
+    @current_branch = @git.current_branch
   end
 
   def branch_names
@@ -27,5 +28,6 @@ class Branches
   def checkout(br)
     @git.fetch
     @git.checkout(br)
+    @current_branch = @git.current_branch
   end
 end

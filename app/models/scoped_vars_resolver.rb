@@ -41,7 +41,13 @@ class ScopedVarsResolver
   end
 
   def get_current_scope
-    @vars = YAML.load_file(File.join(current_path, 'configs.yml'))
+    @vars = []
+    return unless File.file?(config_path)
+    @vars = YAML.load_file(config_path)
+  end
+
+  def config_path
+    File.join(current_path, 'configs.yml')
   end
 
   def get_parent_scope
