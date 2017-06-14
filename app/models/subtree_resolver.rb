@@ -8,27 +8,32 @@ require 'URI'
 # templates.
 #
 class SubtreeResolver < ActionView::Resolver
-  attr_accessor :request, :paths
+  attr_accessor :request, :paths_object
 
   def find_templates(name, prefix, partial, details, outside_app_allowed = false)
     format = details[:formats][0]
     requested = normalize_path(name, prefix)
 
     path = File.
-      expand_path("#{paths.content_path}/#{requested}.#{format}", __FILE__)
+      expand_path("#{paths_object.content_path}/#{requested}.#{format}", __FILE__)
 
     paths = details[:handlers]
-      .reject{|lang| !File.exists?("#{path}.#{lang.to_s}") }
+      .reject{|lang| !File.exists?("#{path}.#{lang.to_s}") && !File.symlink?("#{path}.#{lang.to_s}") }
       .collect{|lang| "#{path}.#{lang.to_s}" }
+
 
     paths << path if File.exists?(path)
     paths.map do |candidate_path|
+      candidate_path = File.expand_path("#{paths_object.content_path}/#{File.readlink(candidate_path)}") if File.symlink?(candidate_path)
+
       initialize_template(candidate_path)
     end
   end
 
   # Initialize an ActionView::Template object based on the record found.
   def initialize_template(path)
+    puts path
+
     source = File.binread(path)
     identifier = path
     handler = ActionView::Template.registered_template_handler('erb')
