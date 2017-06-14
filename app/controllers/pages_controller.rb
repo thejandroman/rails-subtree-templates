@@ -14,7 +14,7 @@ class PagesController < ActionController::Base
     # setup the needed path settings for content
     paths = PathResolver.new(request)
     @@resolver.request = request
-    @@resolver.paths_object = paths
+    @@resolver.content_paths = paths
 
     # Set local vars
     @vars = ScopedVarsResolver.new(request, paths, paths.last_folder)
