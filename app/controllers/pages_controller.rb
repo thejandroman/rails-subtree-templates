@@ -1,9 +1,6 @@
 require 'YAML'
 
-class PagesController < ActionController::Base
-  include ActionController::Rendering
-  include AbstractController::Helpers
-
+class PagesController < ApplicationController
   @@resolver = SubtreeResolver.new
 
   helper PagesHelper
