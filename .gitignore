@@ -22,3 +22,5 @@
 
 /content/
 /bin/
+/public/packs
+/node_modules
