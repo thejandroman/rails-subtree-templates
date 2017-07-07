@@ -15,15 +15,22 @@ const extensionGlob = `**/*{${settings.extensions.join(',')}}*`
 const entryPath = join(settings.source_path, settings.source_entry_path)
 const packPaths = sync(join(entryPath, extensionGlob))
 
+packPaths.push("app/views/layouts/domain2.com/layout_test2/webpacks/webpack-demo/src/submodule1")
+
+console.log(packPaths)
+
 module.exports = {
-  entry: packPaths.reduce(
-    (map, entry) => {
-      const localMap = map
-      const namespace = relative(join(entryPath), dirname(entry))
-      localMap[join(namespace, basename(entry, extname(entry)))] = resolve(entry)
-      return localMap
-    }, {}
-  ),
+  entry: {
+    'domain2': "./app/views/layouts/domain2.com/layout_test2/webpacks/webpack-demo/src/submodule1"
+  },
+  // entry: packPaths.reduce(
+  //   (map, entry) => {
+  //     const localMap = map
+  //     const namespace = relative(join(entryPath), dirname(entry))
+  //     localMap[join(namespace, basename(entry, extname(entry)))] = resolve(entry)
+  //     return localMap
+  //   }, {}
+  // ),
 
   output: {
     filename: '[name].js',
