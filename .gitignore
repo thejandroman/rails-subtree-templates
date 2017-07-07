@@ -22,3 +22,6 @@
 
 /content/
 /bin/
+
+# Ignore layout repos
+/app/views/layouts/*/
